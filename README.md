@@ -2,7 +2,7 @@
 
 **ARGUS** is a ROS-based autonomous robot designed to ensure habitat safety and operational reliability for future lunar missions. In environments lacking GPS and under hazardous conditions, ARGUS acts as a vigilant guardian, reducing human workload and enhancing astronaut safety.
 
-This project, developed for the Smart India Hackathon (SIH), is a prototype of an autonomous system capable of navigating a simulated lunar habitat, monitoring critical environmental parameters, and signaling alerts when anomalies are detected.
+This project, is a prototype of an autonomous system capable of navigating a simulated lunar habitat, monitoring critical environmental parameters, and signaling alerts when anomalies are detected.
 
 -----
 
