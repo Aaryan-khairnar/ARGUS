@@ -59,7 +59,7 @@ ARGUS is built on a modular ROS architecture, with each core functionality separ
 
     ```bash
     cd ~/argus_ws/src
-    git clone [Your Repository URL]
+    git clone https://github.com/Aaryan-khairnar/ARGUS/
     ```
 
 4.  **Install Dependencies:**
