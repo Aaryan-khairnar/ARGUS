@@ -56,7 +56,7 @@ These instructions are tailored to the specific structure of this repository.
     Clone this repository into the `src` directory of your workspace.
     ```bash
     cd ~/argus_ws/src
-    git clone [https://github.com/Aaryan-khairnar/ARGUS/](https://github.com/Aaryan-khairnar/ARGUS/)
+    git clone https://github.com/Aaryan-khairnar/ARGUS/
     ```
 
 3.  **Configure the Source Directory (One-Time Step):**
@@ -99,6 +99,7 @@ This command starts Gazebo with the lunar habitat world and spawns the ARGUS rob
 
 ```bash
 roslaunch argus_gazebo spawn.launch
+```
 
 ### 2\. Perform Mapping (One-Time Setup)
 
