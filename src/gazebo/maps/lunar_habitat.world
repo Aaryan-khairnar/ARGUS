@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <gravity>0 0 -1.62</gravity>
+
+    <model name="habitat_walls">
+      <static>true</static>
+      <pose>0 0 0 0 0 0</pose>
+      <link name="walls_link">
+
+        <visual name="wall_1_visual">
+          <pose>0 5 1.25 0 0 0</pose>
+          <geometry><box><size>10 0.2 2.5</size></box></geometry>
+        </visual>
+        <collision name="wall_1_collision">
+          <pose>0 5 1.25 0 0 0</pose>
+          <geometry><box><size>10 0.2 2.5</size></box></geometry>
+        </collision>
+
+        <visual name="wall_2_visual">
+          <pose>0 -5 1.25 0 0 0</pose>
+          <geometry><box><size>10 0.2 2.5</size></box></geometry>
+        </visual>
+        <collision name="wall_2_collision">
+          <pose>0 -5 1.25 0 0 0</pose>
+          <geometry><box><size>10 0.2 2.5</size></box></geometry>
+        </collision>
+
+        <visual name="wall_3_visual">
+          <pose>5 0 1.25 0 0 1.57</pose>
+          <geometry><box><size>10 0.2 2.5</size></box></geometry>
+        </visual>
+        <collision name="wall_3_collision">
+          <pose>5 0 1.25 0 0 1.57</pose>
+          <geometry><box><size>10 0.2 2.5</size></box></geometry>
+        </collision>
+
+      </link>
+    </model>
+
+  </world>
+</sdf>
