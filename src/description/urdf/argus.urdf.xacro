@@ -1,36 +1,106 @@
 <?xml version="1.0"?>
 <robot name="argus" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- Add a Gazebo reference for the blue color -->
-  <gazebo reference="base_link">
-    <material>Gazebo/Blue</material>
-  </gazebo>
+  <material name="blue">
+    <color rgba="0.0 0.0 0.8 1.0"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+
+  <xacro:property name="wheel_radius" value="0.05" />
+  <xacro:property name="wheel_height" value="0.04" />
+  <xacro:property name="wheel_mass" value="0.5" />
+
+  <xacro:macro name="wheel" params="prefix parent">
+    <link name="${prefix}_wheel_link">
+      <visual>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_height}"/>
+        </geometry>
+        <material name="grey"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_height}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${wheel_mass}"/>
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="${parent}"/>
+      <child link="${prefix}_wheel_link"/>
+      <origin xyz="0 0 0" rpy="-1.5707 0 0"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+
+    <gazebo reference="${prefix}_wheel_link">
+      <material>Gazebo/Grey</material>
+    </gazebo>
+  </xacro:macro>
 
   <link name="base_link">
     <visual>
       <geometry>
         <box size="0.5 0.3 0.1"/>
       </geometry>
-      <material name="blue">
-        <color rgba="0.0 0.0 0.8 1.0"/>
-      </material>
+      <material name="blue"/>
     </visual>
-    
     <collision>
       <geometry>
         <box size="0.5 0.3 0.1"/>
       </geometry>
     </collision>
-    
-    <!-- CRITICAL: Added inertial properties for the physics simulation -->
     <inertial>
-      <!-- Mass in kilograms -->
-      <mass value="5.0"/> 
-      <!-- Inertia matrix for a box -->
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
-               iyy="0.01" iyz="0.0"
-               izz="0.01"/>
+      <mass value="5.0"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
     </inertial>
   </link>
+
+  <gazebo reference="base_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <link name="front_left_mount"/>
+  <link name="front_right_mount"/>
+  <link name="rear_left_mount"/>
+  <link name="rear_right_mount"/>
+
+  <joint name="front_left_mount_joint" type="fixed"><parent link="base_link"/><child link="front_left_mount"/><origin xyz="0.15 0.17 0"/></joint>
+  <joint name="front_right_mount_joint" type="fixed"><parent link="base_link"/><child link="front_right_mount"/><origin xyz="0.15 -0.17 0"/></joint>
+  <joint name="rear_left_mount_joint" type="fixed"><parent link="base_link"/><child link="rear_left_mount"/><origin xyz="-0.15 0.17 0"/></joint>
+  <joint name="rear_right_mount_joint" type="fixed"><parent link="base_link"/><child link="rear_right_mount"/><origin xyz="-0.15 -0.17 0"/></joint>
+
+  <xacro:wheel prefix="front_left" parent="front_left_mount"/>
+  <xacro:wheel prefix="front_right" parent="front_right_mount"/>
+  <xacro:wheel prefix="rear_left" parent="rear_left_mount"/>
+  <xacro:wheel prefix="rear_right" parent="rear_right_mount"/>
+
+  <gazebo>
+    <plugin name="diff_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <namespace>/argus</namespace>
+      </ros>
+      <left_joint>front_left_wheel_joint</left_joint>
+      <left_joint>rear_left_wheel_joint</left_joint>
+      <right_joint>front_right_wheel_joint</right_joint>
+      <right_joint>rear_right_wheel_joint</right_joint>
+      <wheel_separation>0.34</wheel_separation>
+      <wheel_diameter>0.1</wheel_diameter>
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+      <command_topic>cmd_vel</command_topic>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+    </plugin>
+  </gazebo>
 
 </robot>

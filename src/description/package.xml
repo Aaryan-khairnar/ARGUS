@@ -13,5 +13,6 @@
   <depend>std_msgs</depend>
   <depend>urdf</depend>
   <depend>xacro</depend>
+  <depend>diff_drive_controller</depend>
 
 </package>
