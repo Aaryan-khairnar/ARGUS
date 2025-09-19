@@ -6,7 +6,7 @@
     <scene>
       <ambient>0.4 0.4 0.4 1</ambient>
       <background>0.1 0.1 0.2 1</background> <!-- Dark blue for a lunar feel -->
-      <shadows>true</shadows>
+      <shadows>false</shadows>
     </scene>
 
     <!-- The sun model for lighting -->
@@ -21,6 +21,13 @@
 
     <!-- Lunar gravity -->
     <gravity>0 0 -1.62</gravity>
+    
+    <!--physics -->
+  <physics type="ode">
+    <max_step_size>0.004</max_step_size>
+    <real_time_update_rate>500</real_time_update_rate>
+  </physics>
+
 
     <!-- The habitat walls model -->
     <model name="habitat_walls">

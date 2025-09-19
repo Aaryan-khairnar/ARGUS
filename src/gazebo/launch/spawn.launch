@@ -4,7 +4,7 @@
     <arg name="world_name" value="$(find argus_gazebo)/worlds/lunar_habitat.world"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="true"/>
+    <arg name="gui" value="false"/>
     <arg name="headless" value="false"/>
     <arg name="debug" value="false"/>
   </include>
@@ -14,6 +14,7 @@
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
         args="-urdf -model argus -param robot_description -x 0 -y 0 -z 0.1"/>
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
-
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+  <remap from="joint_states" to="/argus/joint_states" />
+  </node>
 </launch>
