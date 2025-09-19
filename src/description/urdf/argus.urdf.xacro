@@ -112,31 +112,35 @@
 
   <!-- ############ GAZEBO PLUGINS ############ -->
   <gazebo>
-    <!-- Differential Drive Controller -->
-    <plugin name="diff_drive_controller" filename="libgazebo_ros_diff_drive.so">
-      <rosNamespace>/argus</rosNamespace>
-      <commandTopic>cmd_vel</commandTopic>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
-      <robotBaseFrame>base_link</robotBaseFrame>
+  <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+    <!-- Namespace for all topics -->
+    <rosNamespace>/argus</rosNamespace>
 
-      <!-- This is the critical line that fixes the RobotModel error in RViz -->
-      <publishWheelJointState>true</publishWheelJointState>
+    <!-- Let ROS navigation stack handle TF -->
+    <broadcastTF>false</broadcastTF>
 
-      <leftJoint>front_left_wheel_joint</leftJoint>
-      <leftJoint>rear_left_wheel_joint</leftJoint>
-      <rightJoint>front_right_wheel_joint</rightJoint>
-      <rightJoint>rear_right_wheel_joint</rightJoint>
+    <!-- Update rate -->
+    <updateRate>100.0</updateRate>
 
-      <wheelSeparation>0.34</wheelSeparation>
-      <wheelDiameter>0.1</wheelDiameter>
-      <maxWheelTorque>20</maxWheelTorque>
-      <maxWheelAcceleration>1.0</maxWheelAcceleration>
+    <!-- Joint names -->
+    <frontLeftJoint>front_left_wheel_joint</frontLeftJoint>
+    <frontRightJoint>front_right_wheel_joint</frontRightJoint>
+    <rearLeftJoint>rear_left_wheel_joint</rearLeftJoint>
+    <rearRightJoint>rear_right_wheel_joint</rearRightJoint>
 
-      <publishOdom>true</publishOdom>
-      <publishOdomTF>true</publishOdomTF>
-      <publishWheelTF>false</publishWheelTF>
-    </plugin>
+    <!-- Kinematics -->
+    <wheelSeparation>0.34</wheelSeparation>
+    <wheelDiameter>0.1</wheelDiameter>
+    <robotBaseFrame>base_link</robotBaseFrame>
+
+    <!-- Topics -->
+    <commandTopic>cmd_vel</commandTopic>
+    <odometryTopic>odom</odometryTopic>
+    <odometryFrame>odom</odometryFrame>
+
+    <!-- Corrected parameter name -->
+    <wheelTorque>20</wheelTorque>
+  </plugin>
   </gazebo>
 
   <gazebo reference="laser_link">
