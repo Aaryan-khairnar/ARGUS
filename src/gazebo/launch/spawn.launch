@@ -18,9 +18,7 @@
 
   <!-- This node provides the transforms for all links based on joint states -->
   <!-- We remap its input topic to listen to the namespaced one from Gazebo -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
-    <remap from="joint_states" to="/argus/joint_states" />
-  </node>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
   <!-- Spawn the robot into Gazebo -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"

@@ -111,37 +111,28 @@
   </joint>
 
   <!-- ############ GAZEBO PLUGINS ############ -->
-  <gazebo>
+<gazebo>
   <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
-    <!-- Namespace for all topics -->
-    <rosNamespace>/argus</rosNamespace>
-
-    <!-- Let ROS navigation stack handle TF -->
-    <broadcastTF>false</broadcastTF>
-
-    <!-- Update rate -->
+    
     <updateRate>100.0</updateRate>
+    <broadcastTF>true</broadcastTF> 
+    <leftFrontJoint>front_left_wheel_joint</leftFrontJoint>
+    <rightFrontJoint>front_right_wheel_joint</rightFrontJoint>
+    <leftRearJoint>rear_left_wheel_joint</leftRearJoint>
+    <rightRearJoint>rear_right_wheel_joint</rightRearJoint>
 
-    <!-- Joint names -->
-    <frontLeftJoint>front_left_wheel_joint</frontLeftJoint>
-    <frontRightJoint>front_right_wheel_joint</frontRightJoint>
-    <rearLeftJoint>rear_left_wheel_joint</rearLeftJoint>
-    <rearRightJoint>rear_right_wheel_joint</rearRightJoint>
-
-    <!-- Kinematics -->
     <wheelSeparation>0.34</wheelSeparation>
     <wheelDiameter>0.1</wheelDiameter>
     <robotBaseFrame>base_link</robotBaseFrame>
 
-    <!-- Topics -->
     <commandTopic>cmd_vel</commandTopic>
     <odometryTopic>odom</odometryTopic>
     <odometryFrame>odom</odometryFrame>
 
-    <!-- Corrected parameter name -->
-    <wheelTorque>20</wheelTorque>
+    <torque>20</torque>
+    
   </plugin>
-  </gazebo>
+</gazebo>
 
   <gazebo reference="laser_link">
     <!-- LiDAR Sensor Plugin -->
