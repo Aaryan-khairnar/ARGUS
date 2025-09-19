@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <robot name="argus" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <!-- Add a Gazebo reference for the blue color -->
+  <gazebo reference="base_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
   <link name="base_link">
     <visual>
       <geometry>
@@ -10,11 +15,22 @@
         <color rgba="0.0 0.0 0.8 1.0"/>
       </material>
     </visual>
+    
     <collision>
       <geometry>
         <box size="0.5 0.3 0.1"/>
       </geometry>
     </collision>
+    
+    <!-- CRITICAL: Added inertial properties for the physics simulation -->
+    <inertial>
+      <!-- Mass in kilograms -->
+      <mass value="5.0"/> 
+      <!-- Inertia matrix for a box -->
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+               iyy="0.01" iyz="0.0"
+               izz="0.01"/>
+    </inertial>
   </link>
 
 </robot>
