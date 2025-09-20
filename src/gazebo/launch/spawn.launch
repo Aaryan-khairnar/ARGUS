@@ -1,26 +1,22 @@
 <launch>
 
-  <!-- Start Gazebo with the specified world -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find argus_gazebo)/worlds/lunar_habitat.world"/>
-    <arg name="paused" value="false"/>
-    <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="false"/> <!-- Set to false for better performance -->
-    <arg name="headless" value="false"/>
-    <arg name="debug" value="false"/>
-  </include>
+  <arg name="world_name" default="$(find argus_gazebo)/worlds/lunar_habitat.world"/>
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="false"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
 
-  <!-- Load the URDF into the ROS Parameter Server -->
+  <node name="gazebo" pkg="gazebo_ros" type="gzserver" args="$(arg world_name)" respawn="false" output="screen" />
+
+  <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" if="$(arg gui)"/>
+
   <param name="robot_description" command="$(find xacro)/xacro '$(find argus_description)/urdf/argus.urdf.xacro'"/>
 
-  <!-- This node is essential for publishing the state of all joints -->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 
-  <!-- This node provides the transforms for all links based on joint states -->
-  <!-- We remap its input topic to listen to the namespaced one from Gazebo -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-  <!-- Spawn the robot into Gazebo -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
         args="-urdf -model argus -param robot_description -x 0 -y 0 -z 0.1"/>
 
