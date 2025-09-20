@@ -1,5 +1,4 @@
 <launch>
-
   <arg name="world_name" default="$(find argus_gazebo)/worlds/lunar_habitat.world"/>
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
@@ -11,7 +10,8 @@
 
   <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" if="$(arg gui)"/>
 
-  <param name="robot_description" command="$(find xacro)/xacro '$(find argus_description)/urdf/argus.urdf.xacro'"/>
+  <arg name="prefix" default=""/>
+  <param name="robot_description" command="$(find xacro)/xacro '$(find argus_description)/urdf/argus.urdf.xacro' prefix:=$(arg prefix)"/>
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 
