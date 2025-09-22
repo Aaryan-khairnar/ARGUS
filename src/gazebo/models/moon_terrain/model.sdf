@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <sdf version="1.6">
-  <model name="apollo_14_terrain">
+  <model name="moon_terrain">
     <static>true</static>
     <link name="link">
       <collision name="collision">
         <geometry>
           <heightmap>
-            <uri>model://moon_terrain/Moon_Lunar_Terrain_gray_513.tif</uri>
-            <size>100 100 15</size> 
+            <uri>model://moon_terrain/gazebo_moon_terrain.tif</uri>
+            <size>500 500 30</size> 
             <pos>0 0 0</pos>
           </heightmap>
         </geometry>
@@ -15,12 +15,12 @@
       <visual name="visual">
         <geometry>
           <heightmap>
-            <uri>model://moon_terrain/Moon_Lunar_Terrain_gray_513.tif</uri>
-            <size>100 100 15</size> <pos>0 0 0</pos>
+            <uri>model://moon_terrain/gazebo_moon_terrain.tif</uri>
+            <size>500 500 30</size>
+            <pos>0 0 0</pos>
             <texture>
-              <diffuse>model://moon_terrain/Moon_Lunar_Terrain.jpg</diffuse>
-              <normal>model://moon_terrain/Moon_Lunar_Terrain.jpg</normal>
-              <size>50</size> 
+              <diffuse>model://moon_terrain/gray_texture.jpg</diffuse>
+              <size>10</size> 
             </texture>
           </heightmap>
         </geometry>

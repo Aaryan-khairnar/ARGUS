@@ -6,44 +6,42 @@
 
   <!-- ############ MATERIALS ############ -->
   <material name="blue"><color rgba="0 0 0.8 1.0"/></material>
-  <material name="grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
-  <material name="red"><color rgba="1 0 0 1.0"/></material>
   <material name="translucent_red"><color rgba="0.8 0 0 0.5"/></material>
-  <material name="translucent_blue"><color rgba="0 0 0.8 0.5"/></material>
-  <material name="gold"><color rgba="0.83 0.69 0.22 1.0"/></material>
-  <material name="silver"><color rgba="0.75 0.75 0.75 1.0"/></material>
-  <material name="bronze"><color rgba="0.8 0.5 0.2 1.0"/></material>
   <material name="steel_blue"><color rgba="0.27 0.51 0.71 1.0"/></material>
+  <material name="grey"><color rgba="0.5 0.5 0.5 1.0"/></material>
   <material name="chassis_color"><color rgba="0.2 0.2 0.2 1.0"/></material>
 
   <!-- ############ WHEEL MACRO ############ -->
-  <xacro:property name="wheel_radius" value="0.05"/>
+  <xacro:property name="wheel_radius" value="0.1"/>
   <xacro:property name="wheel_height" value="0.04"/>
   <xacro:property name="wheel_mass" value="0.5"/>
 
-  <xacro:macro name="wheel" params="prefix parent=''">
+<xacro:macro name="wheel" params="prefix parent=''">
     <link name="${prefix}_wheel_link">
       <visual>
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_height}"/>
         </geometry>
         <material name="grey"/>
+        <origin rpy="1.5708 0 0"/>
       </visual>
       <collision>
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_height}"/>
         </geometry>
+        <origin rpy="1.5708 0 0"/>
       </collision>
       <inertial>
         <mass value="${wheel_mass}"/>
         <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+        <origin rpy="1.5708 0 0"/>
       </inertial>
     </link>
 
     <joint name="${prefix}_wheel_joint" type="continuous">
       <parent link="${parent}"/>
       <child link="${prefix}_wheel_link"/>
-      <origin xyz="0 0 -0.05" rpy="1.5707 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
     </joint>
 
@@ -54,7 +52,7 @@
         <kp>100000</kp>
         <kd>1</kd>
     </gazebo>
-  </xacro:macro>
+</xacro:macro>
 
   <!-- ############ BASE LINK ############ -->
   <link name="base_link">
@@ -72,8 +70,12 @@
   </link>
 
   <gazebo reference="base_link">
-  <gravity>true</gravity>
-    <material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse><specular>0.2 0.2 0.2 1</specular></material>
+    <gravity>true</gravity>
+    <material>
+      <ambient>0.2 0.2 0.2 1</ambient>
+      <diffuse>0.2 0.2 0.2 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+    </material>
   </gazebo>
 
   <!-- ############ WHEEL MOUNTS ############ -->
@@ -85,33 +87,25 @@
   <joint name="front_left_mount_joint" type="fixed">
     <parent link="base_link"/><child link="front_left_mount"/>
     <origin xyz="0.15 0.17 0"/>
-    <geometry>
-      <box size="0.02 0.02 0.02"/>
-    </geometry>
+    <geometry><box size="0.02 0.02 0.02"/></geometry>
   </joint>
 
   <joint name="front_right_mount_joint" type="fixed">
     <parent link="base_link"/><child link="front_right_mount"/>
     <origin xyz="0.15 -0.17 0"/>
-    <geometry>
-      <box size="0.02 0.02 0.02"/>
-    </geometry>
+    <geometry><box size="0.02 0.02 0.02"/></geometry>
   </joint>
 
   <joint name="rear_left_mount_joint" type="fixed">
     <parent link="base_link"/><child link="rear_left_mount"/>
     <origin xyz="-0.15 0.17 0"/>
-    <geometry>
-      <box size="0.02 0.02 0.02"/>
-    </geometry>
+    <geometry><box size="0.02 0.02 0.02"/></geometry>
   </joint>
 
   <joint name="rear_right_mount_joint" type="fixed">
     <parent link="base_link"/><child link="rear_right_mount"/>
     <origin xyz="-0.15 -0.17 0"/>
-    <geometry>
-      <box size="0.02 0.02 0.02"/>
-    </geometry>
+    <geometry><box size="0.02 0.02 0.02"/></geometry>
   </joint>
 
   <!-- ############ ATTACH WHEELS ############ -->
@@ -141,56 +135,55 @@
 
   <!-- ############ LIDAR PLUGIN ############ -->
   <link name="laser_link">
-  <visual>
-    <geometry><cylinder radius="0.03" length="0.05"/></geometry>
-    <material name="translucent_red"/>
-  </visual>
-  <collision>
-    <geometry><cylinder radius="0.03" length="0.05"/></geometry>
-  </collision>
-  <inertial>
-    <mass value="0.1"/>
-    <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
-  </inertial>
-</link>
+    <visual>
+      <geometry><cylinder radius="0.03" length="0.05"/></geometry>
+      <material name="translucent_red"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.03" length="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
 
-<joint name="laser_joint" type="fixed">
-  <parent link="base_link"/>
-  <child link="laser_link"/>
-  <origin xyz="0 0 0.2" rpy="0 0 0"/>
-</joint>
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser_link"/>
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+  </joint>
 
-<gazebo reference="laser_link">
-  <sensor type="ray" name="head_hokuyo_sensor">
-    <pose>0 0 0 0 0 0</pose>
-    <visualize>true</visualize>
-    <update_rate>20</update_rate>
-    <ray>
-      <scan>
-        <horizontal>
-          <samples>720</samples>
-          <resolution>1</resolution>
-          <min_angle>-1.570796</min_angle>
-          <max_angle>1.570796</max_angle>
-        </horizontal>
-      </scan>
-      <range>
-        <min>0.10</min>
-        <max>10.0</max>
-        <resolution>0.01</resolution>
-      </range>
-      <noise>
-        <type>gaussian</type>
-        <mean>0.0</mean>
-        <stddev>0.01</stddev>
-      </noise>
-    </ray>
-    <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
-      <topicName>/scan</topicName>
-      <frameName>laser_link</frameName>
-    </plugin>
-  </sensor>
-</gazebo>
-
+  <gazebo reference="laser_link">
+    <sensor type="ray" name="head_hokuyo_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>20</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.570796</min_angle>
+            <max_angle>1.570796</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>10.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>/scan</topicName>
+        <frameName>laser_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
 
 </robot>

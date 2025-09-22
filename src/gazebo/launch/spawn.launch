@@ -1,23 +1,46 @@
 <launch>
+  <!-- World parameters -->
   <arg name="world_name" default="$(find argus_gazebo)/worlds/lunar_habitat.world"/>
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
-  <arg name="gui" default="false"/>
-  <arg name="headless" default="false"/>
-  <arg name="debug" default="false"/>
+  <arg name="gui" default="true"/>
 
-  <node name="gazebo" pkg="gazebo_ros" type="gzserver" args="$(arg world_name)" respawn="false" output="screen" />
+  <!-- Gazebo server -->
+  <node name="gazebo" pkg="gazebo_ros" type="gzserver" args="$(arg world_name)" respawn="false" output="screen">
+    <rosparam> use_sim_time: true </rosparam>
+    <param name="publish_frequency" value="50"/>
+  </node>
 
-  <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" if="$(arg gui)"/>
+  <!-- Gazebo client -->
+  <node name="gazebo_gui" pkg="gazebo_ros" type="gzclient" respawn="false" output="screen" if="$(arg gui)">
+    <rosparam> use_sim_time: true </rosparam>
+  </node>
 
+  <!-- Robot description -->
   <arg name="prefix" default=""/>
   <param name="robot_description" command="$(find xacro)/xacro '$(find argus_description)/urdf/argus.urdf.xacro' prefix:=$(arg prefix)"/>
 
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <!-- Robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    <param name="publish_frequency" value="50"/>
+    <rosparam> use_sim_time: true </rosparam>
+  </node>
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-
+  <!-- Spawn robot in Gazebo -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-        args="-urdf -model argus -param robot_description -x 0 -y 0 -z 0.1"/>
+        args="-urdf -model argus -param robot_description -x 0 -y 0 -z 0.1">
+    <rosparam> use_sim_time: true </rosparam>
+  </node>
+
+  <!-- Teleop for testing movement -->
+  <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_twist_keyboard" output="screen">
+    <rosparam> use_sim_time: true </rosparam>
+  </node>
+
+  <!-- Optional: joint_state_publisher for RViz visualization -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="publish_frequency" value="50"/>
+    <rosparam> use_sim_time: true </rosparam>
+  </node>
 
 </launch>
