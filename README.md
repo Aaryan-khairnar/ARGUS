@@ -8,12 +8,11 @@ This project is a prototype of an autonomous system capable of navigating a simu
 
 ## Features
 
--   **Autonomous Patrol:** ARGUS can autonomously navigate a predefined patrol route covering both indoor and outdoor sections of a lunar habitat.
--   **Mapping & Localization:** Utilizes the ROS navigation stack with `gmapping` for creating a 2D map of the environment and `amcl` for robust localization within that map.
--   **Environmental Monitoring:** Constantly monitors critical life-support parameters, such as oxygen levels and ambient temperature.
--   **Anomaly & Hazard Detection:** Identifies when environmental parameters go beyond safe operational thresholds.
--   **Alert System:** Provides clear, immediate alerts to the console when an anomaly is detected, specifying the nature of the hazard.
--   **Obstacle Avoidance:** Employs LiDAR data for real-time detection and avoidance of static and dynamic obstacles not present on the initial map.
+-   **3D Mapping & Localization:** Utilizes a 3D LiDAR and the **RTAB-Map** SLAM package to generate detailed 3D point cloud maps of the environment and robustly track the robot's position within them.
+-   **Realistic Simulation:** Operates in a custom Gazebo world that simulates the uneven terrain of the lunar surface using heightmaps and textures.
+-   **Autonomous Patrol:** Capable of navigating a predefined patrol route across the challenging 3D lunar landscape.
+-   **Environmental Monitoring & Alerting:** Monitors critical life-support parameters and signals alerts when anomalies are detected.
+-   **Advanced Obstacle Avoidance:** Employs 3D point cloud data for real-time detection and avoidance of complex obstacles like rocks and crater edges.
 -   **Simulation-First:** Fully developed and validated in a Gazebo 3D simulation environment, modeling a lunar habitat.
 
 ---
@@ -34,54 +33,57 @@ ARGUS is built on a modular ROS architecture, with each core functionality separ
 ### Prerequisites
 
 -   **Ubuntu 20.04 LTS**
--   **ROS Noetic Ninjemys:** The core robotics framework. [Installation Guide](http://wiki.ros.org/noetic/Installation/Ubuntu).
+-   **ROS Noetic Ninjemys:** [Installation Guide](http://wiki.ros.org/noetic/Installation/Ubuntu).
 -   **Git:** For version control.
 -   **Catkin Tools:** The recommended ROS build system.
     ```bash
     sudo apt-get install python3-catkin-tools
     ```
+-   **RTAB-Map for ROS:** You must install the 3D SLAM package.
+    ```bash
+    sudo apt-get install ros-noetic-rtabmap-ros
+    ```
+
 
 ### Installation & Setup
 
 These instructions are tailored to the specific structure of this repository.
 
 1.  **Create a Catkin Workspace:**
-    This will be the central directory for your project.
     ```bash
     mkdir -p ~/argus_ws/src
     cd ~/argus_ws/
     ```
 
 2.  **Clone the Repository:**
-    Clone this repository into the `src` directory of your workspace.
     ```bash
     cd ~/argus_ws/src
-    git clone https://github.com/Aaryan-khairnar/ARGUS/
+    git clone [https://github.com/Aaryan-khairnar/ARGUS/](https://github.com/Aaryan-khairnar/ARGUS/)
     ```
 
 3.  **Configure the Source Directory (One-Time Step):**
-    Because the ROS packages are inside the `ARGUS/src` folder, you must tell the build system where to find them. This command configures the workspace permanently, so you only need to do it once.
+    This command tells the build system where your packages are located and only needs to be run once.
     ```bash
     cd ~/argus_ws
     catkin config --source src/ARGUS/src
     ```
 
 4.  **Install Dependencies:**
-    Use `rosdep` to install all necessary package dependencies.
+    This command will install any other ROS packages your project needs.
     ```bash
     cd ~/argus_ws
     rosdep install --from-paths src/ARGUS/src --ignore-src -r -y
     ```
 
 5.  **Build the Workspace:**
-    From now on, use the `catkin build` command.
+    Use the `catkin build` command to compile your project.
     ```bash
     cd ~/argus_ws
     catkin build
     ```
 
 6.  **Source the Workspace:**
-    You must source the setup file in every new terminal. For convenience, add it to your `.bashrc`.
+    Add the workspace to your environment.
     ```bash
     echo "source ~/argus_ws/devel/setup.bash" >> ~/.bashrc
     source ~/.bashrc
@@ -91,49 +93,54 @@ These instructions are tailored to the specific structure of this repository.
 
 ## Usage
 
-Follow these steps to run the full ARGUS mission simulation.
+This workflow is divided into two main phases: creating the realistic world and then mapping it in 3D.
 
-### 1. Launch the Simulation Environment
+### Phase 1: Create the Lunar World & Upgrade the Robot
 
-This command starts Gazebo with the lunar habitat world and spawns the ARGUS robot.
+First, we need to create the environment and give our robot the right sensor to perceive it.
+
+1.  **Create the Moon Surface:** Follow the tutorial to create the `moon_surface.world` file using the provided heightmap and texture images. Make sure to update your `spawn.launch` file to load this new world.
+
+2.  **Upgrade the Robot's URDF:** Open your `argus.urdf.xacro` file and add the 3D LiDAR sensor code block. This gives your robot the hardware it needs to see in 3D.
+
+### Phase 2: Perform 3D Mapping with RTAB-Map
+
+Now that you have a 3D world and a 3D-capable robot, you can begin mapping.
+
+1.  **Launch the Simulation Environment (Terminal 1):**
+    This starts Gazebo with your custom moon world and spawns the ARGUS robot, now equipped with its 3D LiDAR.
+    ```bash
+    roslaunch argus_gazebo spawn.launch
+    ```
+
+2.  **Launch the 3D SLAM Node (Terminal 2):**
+    This command starts the RTAB-Map software in mapping mode. It will automatically start listening for the 3D LiDAR data.
+    ```bash
+    roslaunch argus_navigation rtabmap_mapping.launch
+    ```
+
+3.  **Launch the Keyboard Controller (Terminal 3):**
+    This allows you to drive the robot around manually.
+    ```bash
+    rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=/argus/cmd_vel
+    ```
+
+4.  **Visualize and Build the Map:**
+    The `rtabmap_mapping.launch` file should have automatically opened the RTAB-Map visualization tool. In this window, you will see the 3D point cloud map being built in real-time as you drive.
+
+    Slowly and carefully drive your robot around the entire lunar surface. Your goal is to cover all the terrain to create a complete and detailed 3D map.
+
+5.  **Save the Map:**
+    When you are finished mapping, RTAB-Map automatically saves the map to a database file located at `~/.ros/rtabmap.db`. You can simply close all the terminals by pressing `Ctrl+C`.
+
+### Phase 3: Autonomous Navigation (Future Goal)
+
+Once the map is saved, the next step in the project will be to use it for autonomous navigation. This involves running RTAB-Map in "localization mode" and using `move_base` to send navigation goals.
 
 ```bash
-roslaunch argus_gazebo spawn.launch
-```
-
-### 2\. Perform Mapping (One-Time Setup)
-
-To enable autonomous navigation, you first need to create a map of the environment.
-
-  - **Launch the mapping node:**
-
-    ```bash
-    roslaunch argus_navigation gmapping.launch
-    ```
-
-  - **Launch a teleop node to drive the robot:**
-
-    ```bash
-    rosrun teleop_twist_keyboard teleop_twist_keyboard.py
-    ```
-
-  - **Visualize in RViz:** Open RViz and add the `/map` topic to see the map being built in real-time. Drive the robot slowly through the entire habitat until the map is complete.
-
-  - **Save the map:**
-
-    ```bash
-    rosrun map_server map_saver -f ~/argus_ws/src/ARGUS/src/gazebo/maps/lunar_habitat
-    ```
-
-### 3\. Run the Autonomous Patrol & Monitoring Mission
-
-This is the main launch file. It starts the navigation system with your saved map and launches the custom task nodes for patrolling and monitoring.
-
-```bash
+# Example command for the future
 roslaunch argus_tasks mission.launch
 ```
-
-Once launched, ARGUS will begin its autonomous patrol. You can monitor its progress in RViz and see alert messages printed to the console if environmental anomalies are detected.
 
 -----
 
@@ -177,6 +184,6 @@ ARGUS/
   - **Robotics Framework:** ROS 1 Noetic Ninjemys
   - **Build System:** Catkin Tools
   - **Simulation:** Gazebo
-  - **Visualization:** RViz
+  - **Visualization:** RViz & RTAB-Map GUI
   - **Core Logic:** Python
   - **Version Control:** Git
